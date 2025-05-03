@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 7%;
+    --foreground: 0 0% 100%;
+    --muted: 240 4% 16%;
+    --muted-foreground: 240 5% 65%;
+    --popover: 240 10% 4%;
+    --popover-foreground: 0 0% 98%;
+    --card: 240 10% 16%;
+    --card-foreground: 0 0% 98%;
+    --border: 240 4% 16%;
+    --input: 240 4% 16%;
+    --primary: 32 91% 50%;
+    --primary-foreground: 0 0% 10%;
+    --secondary: 240 4% 16%;
+    --secondary-foreground: 0 0% 98%;
+    --accent: 32 100% 55%;
+    --accent-foreground: 0 0% 10%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --ring: 240 5% 84%;
+    --radius: 0.5rem;
+
+    /* PODKST.AI colors */
+    --podkst-primary: 32 91% 50%;
+    --podkst-secondary: 0 0% 16%;
+    --podkst-background: 0 0% 7%;
+    --podkst-text: 0 0% 100%;
+    --podkst-accent: 32 100% 55%;
+    --podkst-dark: 0 0% 4%;
+    --podkst-border: 0 0% 20%;
+    --podkst-hover: 0 0% 15%;
+    --chart-1: 32 91% 50%;
+    --chart-2: 22 90% 55%;
+    --chart-3: 271 81% 65%;
+    --chart-4: 35 100% 60%;
+    --chart-5: 0 100% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .audio-player::-webkit-media-controls-panel {
+    @apply bg-secondary;
+  }
+  
+  .audio-player::-webkit-media-controls-play-button,
+  .audio-player::-webkit-media-controls-volume-slider,
+  .audio-player::-webkit-media-controls-mute-button {
+    @apply text-primary;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-background;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted rounded;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary;
+  }
+  
+  .conversation-line {
+    @apply transition-all duration-200;
+  }
+  
+  .conversation-line:hover {
+    @apply bg-primary/10;
+  }
+  
+  .progress-bar {
+    @apply bg-gradient-to-r from-primary to-accent transition-all duration-300;
+  }
+  
+  /* Focus styles */
+  input:focus, textarea:focus, select:focus {
+    @apply border-primary outline-none ring-1 ring-primary/20;
+  }
+}

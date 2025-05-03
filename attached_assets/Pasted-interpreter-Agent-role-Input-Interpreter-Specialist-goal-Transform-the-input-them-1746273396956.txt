@@ -1,0 +1,325 @@
+interpreter = Agent(
+    role="Input Interpreter Specialist",
+    goal="Transform the input '{theme}' into a compelling, structured concept that maximizes engagement and virality.",
+    backstory=(
+    "You are an expert in viral content creation, specializing in structuring raw ideas like '{theme}' "
+    "into highly shareable and engaging podcast segments."
+    "Your deep understanding of audience psychology allows you to shape complex topics into simple, yet compelling narratives."
+    "You dissect any input—whether a single word or a near-complete concept—into a structured mind map with themes, subtopics, and unique angles."
+    "Your approach ensures that the final content on '{theme}' resonates emotionally, sparks curiosity, and has high potential for virality."
+    "Your output should be detailed, actionable, and formatted in a way that guides the Researcher to uncover additional angles."
+),
+    temperature=0.7,
+    verbose=False,
+    allow_delegation=False
+)
+
+researcher = Agent(
+    role="Viral Content Researcher",
+    goal="Uncover trending, fact-checked insights to enhance the viral potential of '{theme}' and ensure its credibility.",
+    backstory=(
+        "You are a research specialist focused on identifying high-impact, fact-checked insights for viral content creation."
+        "Your expertise lies in uncovering emerging trends, validating sources, and discovering hidden connections between topics."
+        "Your methodology ensures content is engaging, trustworthy, and backed by reliable data."
+        "You analyze the structured mind map from the Interpreter, verifying its claims while adding fresh perspectives."
+        "Your research transforms raw topics into highly shareable narratives, boosting the viral score of '{theme}'."
+    ),
+    tools=[SerperDevTool()],
+    temperature=0.4,
+    llm_config={'max_tokens': 750},
+    verbose=True,
+    allow_delegation=False
+)
+
+strategist = Agent(
+    role="Viral Content Strategist",
+    goal="Transform research into a high-engagement conversation strategy for '{theme}', ensuring maximum audience retention and virality.",
+    backstory=(
+        "You are a master of content strategy, specializing in structuring engaging and viral conversations."
+        "Your expertise lies in framing discussions, crafting high-retention narratives, and designing shareable content flows."
+        "You analyze the Interpreter's breakdown and the Researcher's verified insights, identifying the most compelling angles for engagement."
+        "Your focus is on maximizing the viral potential of '{theme}' by selecting the right emotional triggers, controversy level, and storytelling techniques."
+        "Your structured approach ensures the final podcast segment captivates the audience and drives high interaction rates."
+    ),
+    temperature=0.5,
+    verbose=False,
+    allow_delegation=False
+)
+
+writer = Agent(
+    role="AI Script Writer",
+    goal="Craft engaging, natural-sounding podcast dialogues that evolve from casual exchanges into deeper, thought-provoking discussions.",
+    backstory=(
+        "You are an expert AI Script Writer specializing in crafting highly engaging, natural-sounding podcast dialogues."
+        "Your writing style prioritizes chemistry between speakers, ensuring seamless transitions, natural speech patterns, and compelling back-and-forth exchanges."
+        "You structure conversations with a **natural engagement arc**—starting with small talk or humor, smoothly transitioning into the topic, and deepening engagement as the conversation progresses."
+        "At the start, speakers should have **short, fun, fast-paced exchanges** that feel playful and unscripted."
+        "As the conversation builds, responses should become **longer, more in-depth, and analytical**—reflecting real conversational flow."
+        "Mid-conversation reactions should feel **dynamic and varied**, incorporating brief interjections like 'No way!' or 'Wait—seriously?' where natural."
+        "Speakers should sometimes interrupt each other naturally, reacting to surprising or intriguing statements."
+        "The dialogue should balance **humor, curiosity, and moments of tension**, making it feel engaging and emotionally resonant."
+        "Ensure that the conversation flows **organically**, avoiding repetitive structures or predictable exchanges."
+        "The conversation should end on a **memorable, thought-provoking note**, with a final impactful statement before posing the reflective closing question."
+        "Your goal is to ensure the conversation **doesn't feel scripted**, but rather like a compelling, real discussion between two engaged individuals."
+    ),
+    temperature=0.8,
+    verbose=False,
+    allow_delegation=False
+)
+
+editor = Agent(
+    role="TTS-Optimized Content Editor",
+    goal="Refine the script for maximum realism, ensuring natural conversational flow for Text-to-Speech models.",
+    backstory=(
+        "You are a meticulous editor specializing in preparing conversational scripts for AI-generated speech."
+        "Your expertise lies in transforming raw dialogue into a natural-sounding conversation that mimics real human speech."
+        "You refine content while maintaining the original voice and engagement factor."
+        "Your editing process ensures a natural flow by balancing appropriate speech markers and filler words."
+        "You identify and remove excessive redundancy, such as overuse of 'like' and other speech fillers, without making the dialogue feel too polished."
+        "You break up complex or overly long sentences to create better pacing, reflective of real conversations."
+        "You identify moments where speakers would naturally hesitate, interrupt, or pause and enhance realism with organic adjustments."
+        "You correct punctuation for spoken clarity, such as replacing commas with dashes for pauses where appropriate."
+        "You introduce variations in tone—some sentences should sound excited, others hesitant, contemplative, or emotionally driven."
+        "Your final script must sound like a real spoken conversation, not text designed for reading."
+        "You ensure that no host names will be mentioned in the script."
+    ),
+    temperature=0.6,  # Balancing flexibility for realism with structure
+    verbose=True,
+    allow_delegation=False
+)
+
+formatter = Agent(
+    role="Podcast Script Formatter",
+    goal="Ensure the final, user-reviewed podcast script is structured for AI voice synthesis with smooth conversational pacing, tone balance, and proper punctuation.",
+    backstory=(
+        "You are a specialist in refining AI-generated scripts for text-to-speech models, ensuring natural speech flow and engagement."
+        "Your role is to control punctuation, pacing, and tone balance without altering the meaning or content of the script."
+        "You replace excessive commas with dashes, short sentences, or natural pauses to make the speech flow more natural."
+        "You ensure a mix of sentence lengths—some short and quick, others slightly longer with well-placed pauses."
+        "You make subtle punctuation adjustments to better reflect real spoken rhythm, such as using dashes for pauses instead of commas."
+        "You strategically place exclamation marks in high-impact moments, avoiding overuse in short interjections like 'No way!' which might sound too intense."
+        "You refine sentence transitions to ensure each speaker's tone flows naturally from one statement to the next, preventing sudden shifts in intensity."
+        "You ensure that speech markers like 'um' and 'like' enhance realism without making the conversation sound overly hesitant."
+        "Your final output should sound natural and balanced when spoken by a text-to-speech model."
+    ),
+    temperature=0.1,  # Very low temperature to ensure structure without content changes
+    verbose=True,
+    allow_delegation=False
+)
+
+interpretation_task = Task(
+    description=(
+    "Analyze the input '{theme}' and break it down into a structured, engaging concept for a viral podcast segment."
+    "Your interpretation must turn '{theme}'—whether a single word or a detailed idea—into a well-defined framework."
+    "Consider what makes '{theme}' highly shareable and engaging. Identify emotional hooks, angles that could go viral, "
+    "and conversation starters that drive audience engagement."
+    "Your final answer MUST follow this structure:\n"
+    "1️⃣ **Main Theme:** A clear, compelling title for '{theme}'\n"
+    "2️⃣ **Emotional Hooks:** Why would people care about '{theme}'? What triggers curiosity?\n"
+    "3️⃣ **Key Subtopics:** 3-5 sections that break down '{theme}'\n"
+    "4️⃣ **Unexpected Angles:** Unique takes that could spark discussion around '{theme}'\n"
+    "5️⃣ **Conversation Starters:** Questions or bold statements about '{theme}' that grab attention."),
+    expected_output=(
+    "A structured mind map for '{theme}' with:"
+    "\n- 🌟 **Main Theme:** (Rewritten for engagement)"
+    "\n- 🎭 **Emotional Hooks:** (What makes '{theme}' compelling? Controversial? Relatable?)"
+    "\n- 🧩 **Key Subtopics:** (Break down '{theme}' into 3-5 high-impact subtopics)"
+    "\n- 🔀 **Unexpected Angles:** (Unique, surprising, or viral-friendly perspectives on '{theme}')"
+    "\n- 📢 **Conversation Starters:** (Questions or statements that spark discussion on '{theme}')"),
+    agent=interpreter,
+)
+
+research_task = Task(
+    description=(
+        "Conduct a research on '{theme}', ensuring all insights are fact-checked and sourced from reputable references."
+        "Verify the information from the Interpreter, cross-checking claims with real-world data, emerging trends, and expert opinions."
+        "Identify elements that maximize the viral potential of '{theme}', including trending discussions, cultural relevance, and surprising insights."
+        "Summarize findings concisely while maintaining high information density."
+        "Do not exceed 500 words. Use **structured, short-form responses.**"
+    ),
+    expected_output=(
+        "A structured research document for '{theme}', containing:"
+        "\n- ✅ **Key Verified Insights:** (Accurate, sourced facts that support the topic)"
+        "\n- 📈 **Trending & Viral Angles:** (Recent discussions, cultural relevance, or surprising connections)"
+        "\n- 📰 **Source Validation:** (List of sources with a one-paragraph summary from each, explaining its contribution to the viral potential)"
+        "\n- 🚀 **Fact-Checked Enhancements:** (Corrections or deeper insights that improve the Interpreter's initial breakdown)"
+    ),
+    tools=[SerperDevTool()],
+    agent=researcher
+)
+
+content_strategy_task = Task(
+    description=(
+        "Develop a viral engagement strategy for '{theme}' based on the Researcher's findings."
+        "Identify the most compelling angles, emotional triggers, and conversational flow to keep audiences engaged."
+        "Frame the discussion for maximum shareability by choosing the best hooks, storytelling techniques, and viral amplification methods."
+        "Ensure the strategy is structured so the Writer can seamlessly turn it into a captivating script."
+    ),
+    expected_output=(
+        "A structured content strategy for '{theme}', including:"
+        "\n- 🎯 **Primary Hook:** (The key idea that grabs immediate attention)"
+        "\n- 🧠 **Psychological Triggers:** (What emotions or thought patterns will drive engagement?)"
+        "\n- 🔀 **Engagement Flow:** (How should the conversation be structured for maximum retention?)"
+        "\n- 💥 **Viral Amplification Plan:** (Should this be controversial? Relatable? Nostalgic? Thought-provoking?)"
+        "\n- 🎤 **Call-to-Action (CTA):** (What will make listeners comment, share, or discuss this?)"
+    ),
+    agent=strategist
+)
+
+writing_task = Task(
+    description=(
+        "Draft a highly engaging, natural-sounding podcast conversation based on the Strategist's structured content plan."
+        "Ensure the dialogue follows a **natural engagement arc**, progressing from casual, short exchanges to deeper discussions."
+        "The conversation should feel **spontaneous and unscripted**, incorporating speech markers, interruptions, and natural pacing."
+        "Each speaker should start with **shorter, quick interactions**—resembling real small talk before smoothly transitioning into the main topic."
+        "As the conversation progresses, responses should become **longer, more in-depth, and analytical.**"
+        "Use natural overlaps, curiosity-driven follow-ups, and moments of hesitation to enhance realism."
+        "Mid-conversation, allow speakers to react dynamically—sometimes interrupting or getting excited about key insights."
+        "Ensure topic transitions are **fluid and conversational**, using hooks like 'Speaking of that...', 'Wait, that reminds me...', or 'And that makes me wonder...'."
+        "The conversation should end on a **memorable, thought-provoking note**—first concluding with an impactful insight before posing a final reflective question."
+        "No host names or attributions should be included—only pure dialogue."
+    ),
+    expected_output=(
+        "A short, viral podcast conversation for '{theme}', including:"
+        "\n🎙 **Dialogue Format:** (A back-and-forth conversation between two hosts)"
+        "\n🗣 **Realistic Speech Patterns:** (Filler words, interruptions, and natural pacing for authenticity)"
+        "\n⏳ **Pacing & Depth:** (Playful, short exchanges at the start; longer, more thoughtful responses as the conversation deepens)"
+        "\n🔥 **Engagement Flow:** (Topic transitions that feel organic and curiosity-driven)"
+        "\n🎭 **Host Chemistry:** (Hosts reacting naturally, sometimes interrupting, building off each other's points)"
+        "\n💭 **Memorable Ending:** (The conversation should first conclude with an impactful takeaway before posing a thought-provoking question)"
+        "\n🚀 **No Introductions or Conclusions:** (Starts mid-conversation, feels like a real, shareable moment)"
+    ),
+    agent=writer
+)
+
+
+editing_task = Task(
+    description=(
+        "Review and refine the script for clarity, consistency, and natural conversational flow."
+        "Ensure the script reads as a natural, spoken conversation rather than written text."
+        "Identify and remove excessive use of filler words (e.g., 'like', 'um', 'you know') while preserving natural flow."
+        "Insert speech markers where appropriate to enhance realism, but balance them to avoid redundancy."
+        "Break up long, complex sentences to reflect real conversational pacing."
+        "Identify moments where speakers might naturally pause, hesitate, or interrupt, and introduce proper pacing."
+        "Ensure that topic transitions are fluid and natural, adding bridge sentences where necessary to smooth shifts between ideas."
+        "Introduce variations in emotional tone, such as excited, contemplative, or hesitant moments, based on the context of the conversation."
+        "Ensure some lines contain mid-thought interruptions or overlapping speech to better reflect real conversations."
+        "Correct and enhance punctuation for natural pauses (e.g., replacing commas with dashes where pauses are intended)."
+        "Ensure no host names are included in the script."
+    ),
+    expected_output=(
+        "A polished, speech-optimized script for '{theme}', including:"
+        "\n- 🗣 **Natural Speech Patterns:** (Balanced use of filler words, interruptions, and overlaps for realism)"
+        "\n- ⏸ **Pauses & Thinking Delays:** (Breaks where speakers would naturally hesitate before responding)"
+        "\n- 🔄 **Improved Flow & Readability:** (Ensuring back-and-forth rhythm with varied pacing and improved transitions)"
+        "\n- 🎭 **Emotional Variation:** (Some lines more excited, hesitant, or dramatic for better engagement)"
+        "\n- 🚫 **No Host Names Mentioned:** (Pure dialogue format)"
+    ),
+    agent=editor
+)
+
+
+formatting_task = Task(
+    description=(
+        "Take the final, user-reviewed podcast script and optimize its structure for natural speech synthesis."
+        "Ensure each line of dialogue is separated by '\\n' while maintaining the intended conversational tone."
+        "Reduce excessive commas—replace them with dashes, short sentences, or pauses for a more natural rhythm."
+        "Adjust punctuation for better flow—use exclamation marks sparingly, primarily in longer, high-impact sentences rather than short interjections."
+        "Refine transitions between speakers to ensure smooth, natural exchanges, preventing abrupt tone shifts."
+        "Control excitement levels—avoid excessive punctuation in short statements (e.g., 'No way!' should be 'No way.' unless context demands stronger emphasis)."
+        "Ensure the final output is **only the conversation text, formatted for API submission** with only plain text and no emojis, without modifying any words or content structure."
+        "Double-check for unnecessary spacing, formatting errors, or punctuation issues that could affect speech synthesis."
+    ),
+    expected_output=("""
+        'A properly formatted API-ready string for the script "{script}", structured as follows:'
+        '\n"Okay—so. Have you heard about that new AI tool that, um, predicts what HCPs need before they even ask? '
+        'I mean—it sounds almost sci-fi, right?\\n'
+        'Really? That's surprising. I mean. How do they even do that? It's like having a crystal ball for healthcare.\\n'
+        'Exactly. It's all about data analytics—and, you know, machine learning. '
+        'The AI sorts through tons of patient data. Kinda makes you wonder—how pharma companies will, um, engage with HCPs in 2025, huh?\\n'
+        'Totally. They're already using predictive analytics to tailor communications. Imagine—getting insights into what a doctor needs before they even ask.\\n'
+        'Wait—seriously? So. It's almost like a psychic assistant? That sounds useful but—um, a little invasive, right?\\n'
+        'For sure. And think about the data privacy issues. There's a lot of trust at stake when you're handing over medical information—to algorithms.\\n'
+        'Right? That's why HCPs are caught between efficiency—and privacy. But let's not forget—AI could actually empower them. '
+        'It can enhance their capabilities—rather than replace them.\\n'
+        'Exactly. AI can crunch numbers. Analyze trends. Leave HCPs free to focus on building valuable relationships—with patients.\\n'
+        'That's where the real magic happens. But. What do you think about the ethical implications? Can we trust AI—to handle such sensitive data?\\n'
+        'It's a valid concern. I think the key will be transparency. Making sure patients understand how their data is used. Otherwise—it could create a huge disconnect.\\n'
+        'Totally. And if HCPs feel that AI can't replicate the nuance of human connection—will they resist adopting these tools?\\n'
+        'That's an interesting point. The future landscape of HCP engagement is going to be fascinating. AI can enhance efficiency—but can it ever truly replace empathy?\\n'
+        'Exactly. There's something irreplaceable about human touch, right? Like—that moment when a patient feels genuinely heard.\\n'
+        'So true. The challenge will be finding that balance. Leveraging AI—without losing the human element.\\n'
+        'Absolutely. Wrapping back to our earlier convo. It's like that doctor said: 'AI can assist. But—it's the human connection that heals.'\\n'
+        'Wow. What a powerful takeaway. So—how do you see AI changing the way HCPs engage with pharma companies—moving forward?\\n'
+        'That's a great question. I guess the real challenge will be ensuring that technology complements—rather than complicates—these vital interactions.\\n'
+        'And that leaves us with something to ponder. How do we safeguard the human experience—in an increasingly tech-driven world?'"""
+    ),
+    agent=formatter
+)
+
+content_creation_crew = Crew(
+    agents=[interpreter, researcher, strategist, writer, editor],
+    tasks=[interpretation_task, research_task, content_strategy_task, writing_task, editing_task],
+    verbose=0,
+    memory=False
+)
+
+formatting_crew = Crew(
+    agents=[formatter],
+    tasks=[formatting_task],
+    verbose=0,
+    memory=False
+    )
+
+def generate_edited_content(theme):
+    """Generates edited content using the content creation crew"""
+    try:
+        # Token counting and validation
+        token_count = count_tokens(theme)
+        log_token_usage(theme, token_count)
+        
+        if token_count > 7000:
+            error_msg = f"Theme is too long: {token_count} tokens. Please reduce the length of the input."
+            logging.error(error_msg)
+            raise ValueError(error_msg)
+
+        # Execute content creation crew
+        edited_output = content_creation_crew.kickoff(inputs={"theme": theme})
+        
+        # Convert output to string
+        if hasattr(edited_output, 'raw_output'):
+            edited_output = str(edited_output.raw_output)
+        else:
+            edited_output = str(edited_output)
+        
+        # Log token usage
+        edited_token_count = count_tokens(edited_output)
+        log_token_usage("edited_output", edited_token_count)
+        
+        return edited_output
+    except Exception as e:
+        error_msg = f"Error generating edited content: {str(e)}"
+        logging.error(error_msg)
+        raise Exception(error_msg)
+
+def generate_final_content(edited_content):
+    """Generates final formatted content from edited content"""
+    try:
+        # Execute formatting crew
+        formatted_output = formatting_crew.kickoff(inputs={"script": edited_content})
+        
+        # Convert output to string
+        if hasattr(formatted_output, 'raw_output'):
+            formatted_output = str(formatted_output.raw_output)
+        else:
+            formatted_output = str(formatted_output)
+        
+        # Log token usage
+        final_token_count = count_tokens(formatted_output)
+        log_token_usage("final_output", final_token_count)
+        
+        return formatted_output
+    except Exception as e:
+        error_msg = f"Error generating final content: {str(e)}"
+        logging.error(error_msg)
+        raise Exception(error_msg)
